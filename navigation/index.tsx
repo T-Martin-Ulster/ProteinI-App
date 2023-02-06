@@ -10,14 +10,18 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { ColorSchemeName, Pressable } from 'react-native';
 
+import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
+
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 
 import LoginScreen from '../screens/LoginScreen';
+import RegisterScreen from '../screens/RegisterScreen';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import TabOneScreen from '../screens/TabOneScreen';
 import TabTwoScreen from '../screens/TabTwoScreen';
+
 
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
@@ -36,13 +40,18 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
  * A root stack navigator is often used for displaying modals on top of all other content.
  * https://reactnavigation.org/docs/modal
  */
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createStackNavigator<RootStackParamList>();
+
+const TransitionScreenOptions = {
+  ...TransitionPresets.SlideFromRightIOS, 
+};
 
 function RootNavigator() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={TransitionScreenOptions}>
       <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
+      <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: true, title: 'New Account' }} />
+      <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false}} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />

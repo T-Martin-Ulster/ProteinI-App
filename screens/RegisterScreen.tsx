@@ -10,10 +10,11 @@ import useColorScheme from '../hooks/useColorScheme';
 import colours from '../constants/Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function LoginScreen({ navigation }: RootStackScreenProps<'Login'>) {
+export default function RegisterScreen({ navigation }: RootStackScreenProps<'Register'>) {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirm, setConfirm] = useState('')
 
   var defaultColour : string = useColorScheme();
 
@@ -35,6 +36,10 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'Login'
     }
   }
 
+  const handleBack= () => {
+    navigation.goBack()
+  }
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user: any) => {
       if (user) {
@@ -46,26 +51,29 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'Login'
   }, [])
 
   const handleSignUp = () => {
-    navigation.navigate('Register')
-  }
 
-  const handleLogin = () => {
-    auth
-      .signInWithEmailAndPassword(email, password)
+    if(password == confirm){
+      auth
+      .createUserWithEmailAndPassword(email, password)
       .then((userCredentials: { user: any; }) => {
         const user = userCredentials.user;
-        console.log('Logged in with:', user.email);
+        console.log('Registered with:', user.email);
       })
       .catch((error: { message: any; }) => alert(error.message))
+    }
+    else{
+      alert("Passwords dont match")
+    }
+    
   }
 
   return (
-    <SafeAreaView style={[styles.root, backgroundStyle()]}>
+    <SafeAreaView style={[styles.root,backgroundStyle()]}>
       <KeyboardAvoidingView
       style={styles.container}
       behavior="padding">
 
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.title}>Register</Text>
       
       <View style={styles.inputContainer}>
         <TextInput
@@ -84,21 +92,31 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'Login'
           secureTextEntry
           placeholderTextColor="grey"
         />
+
+        <TextInput
+          placeholder="Confirm Password"
+          value={confirm}
+          onChangeText={text => setConfirm(text)}
+          style={[styles.input, inputStyle()]}
+          secureTextEntry
+          placeholderTextColor="grey"
+        />
       </View>
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          onPress={handleLogin}
-          style={styles.loginButton}
-        >
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
           onPress={handleSignUp}
-          style={styles.registerButton}
-        >
-          <Text style={styles.buttonOutlineText}>Register</Text>
+          style={styles.registerButton}>
+          <Text style={styles.buttonText}>Register</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={handleBack}
+          style={styles.cancelButton}
+        >
+          <Text style={styles.buttonOutlineText}>Already have account?</Text>
+        </TouchableOpacity>
+    
       </View>
     </KeyboardAvoidingView>
 
@@ -128,7 +146,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    marginTop: 100,
   },
   logo: {
     maxHeight: "100%",
@@ -178,13 +195,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
   },
-  registerButton: {
+  cancelButton: {
     width: '100%',
     borderRadius: 10,
     alignItems: 'center',
     marginTop: 15,
   },
-  loginButton: {
+  registerButton: {
     backgroundColor: '#0782F9',
     width: 150,
     padding: 15,
