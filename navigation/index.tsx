@@ -17,7 +17,7 @@ import useColorScheme from '../hooks/useColorScheme';
 
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
-import ModalScreen from '../screens/ModalScreen';
+import AccountScreen from '../screens/AccountScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import TabOneScreen from '../screens/TabOneScreen';
 import TabTwoScreen from '../screens/TabTwoScreen';
@@ -48,13 +48,15 @@ const TransitionScreenOptions = {
 
 function RootNavigator() {
   return (
-    <Stack.Navigator screenOptions={TransitionScreenOptions}>
-      <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: true, title: 'New Account' }} />
-      <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false}} />
-      <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
+    <Stack.Navigator>
+      <Stack.Group screenOptions={TransitionScreenOptions}>
+          <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: true, title: 'New Account' }} />
+          <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false, title: 'Home'}} />
+          <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
+      </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
-        <Stack.Screen name="Modal" component={ModalScreen} />
+        <Stack.Screen name="Account" component={AccountScreen}  />
       </Stack.Group>
     </Stack.Navigator>
   );
@@ -83,7 +85,7 @@ function BottomTabNavigator() {
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
           headerRight: () => (
             <Pressable
-              onPress={() => navigation.navigate('Modal')}
+              onPress={() => navigation.navigate('Account')}
               style={({ pressed }) => ({
                 opacity: pressed ? 0.5 : 1,
               })}>

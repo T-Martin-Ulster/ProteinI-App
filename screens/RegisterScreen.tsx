@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, TouchableOpacity, Image, Dimensions, Alert } from 'react-native';
 import { Text, View} from '../components/Themed';
 import { auth } from '../config/firebase'
 import navigation from '../navigation';
@@ -50,21 +50,53 @@ export default function RegisterScreen({ navigation }: RootStackScreenProps<'Reg
     return unsubscribe
   }, [])
 
-  const handleSignUp = () => {
+  function isValidEmail() {
+    var result = /\S+@\S+\.\S+/.test(email)
+    if(!result){
+      Alert.alert('Error', 'Please enter valid email')
+    }
+    return result;
+  }
 
-    if(password == confirm){
+  function isValidPassword() {
+    if(password.trim() == ""){
+      Alert.alert('Error', 'Please enter password')
+      return false
+    }
+
+    if(!/\s/g.test(password)){
+      Alert.alert('Error', 'Password can not contain spaces')
+      return false
+    }
+
+    if(password != confirm){
+      Alert.alert('Error', 'Passwords do not match')
+      return false
+    }
+
+    if(password.trim().length < 8){
+      Alert.alert('Error', 'Password is too short, must be at least 8 charaters')
+      return false
+    }
+
+    if(!/\d/.test(password) || !/[a-zA-Z]/g.test(password)){
+      Alert.alert('Error', 'Password must contain numbers and letters')
+      return false
+    }
+    
+    return true
+  }
+
+  const handleSignUp = () => {
+    if(isValidEmail() && isValidPassword()){
       auth
       .createUserWithEmailAndPassword(email, password)
       .then((userCredentials: { user: any; }) => {
         const user = userCredentials.user;
         console.log('Registered with:', user.email);
       })
-      .catch((error: { message: any; }) => alert(error.message))
+      .catch((error: { message: any; }) => Alert.alert('Error',error.message))
     }
-    else{
-      alert("Passwords dont match")
-    }
-    
   }
 
   return (
