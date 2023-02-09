@@ -40,16 +40,6 @@ export default function RegisterScreen({ navigation }: RootStackScreenProps<'Reg
     navigation.goBack()
   }
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user: any) => {
-      if (user) {
-        navigation.replace("Root")
-      }
-    })
-
-    return unsubscribe
-  }, [])
-
   function isValidEmail() {
     var result = /\S+@\S+\.\S+/.test(email)
     if(!result){
@@ -64,7 +54,7 @@ export default function RegisterScreen({ navigation }: RootStackScreenProps<'Reg
       return false
     }
 
-    if(!/\s/g.test(password)){
+    if(/\s/g.test(password)){
       Alert.alert('Error', 'Password can not contain spaces')
       return false
     }
@@ -80,7 +70,7 @@ export default function RegisterScreen({ navigation }: RootStackScreenProps<'Reg
     }
 
     if(!/\d/.test(password) || !/[a-zA-Z]/g.test(password)){
-      Alert.alert('Error', 'Password must contain numbers and letters')
+      Alert.alert('Error', 'Password must contain both numbers and letters')
       return false
     }
     
@@ -110,7 +100,7 @@ export default function RegisterScreen({ navigation }: RootStackScreenProps<'Reg
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Email"
-          
+          autoCapitalize='none'
           value={email}
           onChangeText={text => setEmail(text)}
           style={[styles.input, inputStyle()]}
@@ -179,15 +169,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
   },
-  logo: {
-    maxHeight: "100%",
-    maxWidth: "100%",
-  },
-  logoContainer: {
-    width: 280,
-    height: 100,
-    marginBottom: 20,
-  },
   separator: {
     color: "black",
     marginVertical: 30,
@@ -234,7 +215,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   registerButton: {
-    backgroundColor: '#0782F9',
+    backgroundColor: colours.tint,
     width: 150,
     padding: 15,
     marginBottom: 10,

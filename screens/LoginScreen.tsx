@@ -38,7 +38,7 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'Login'
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user: any) => {
       if (user) {
-        navigation.replace("Root")
+        navigation.replace("Welcome")
       }
     })
 
@@ -102,7 +102,7 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'Login'
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Email"
-          
+          autoCapitalize='none'
           value={email}
           onChangeText={text => setEmail(text)}
           style={[styles.input, inputStyle()]}
@@ -167,15 +167,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 100,
   },
-  logo: {
-    maxHeight: "100%",
-    maxWidth: "100%",
-  },
-  logoContainer: {
-    width: 280,
-    height: 100,
-    marginBottom: 20,
-  },
   separator: {
     color: "black",
     marginVertical: 30,
@@ -208,13 +199,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
   },
-  button: {
-    backgroundColor: '#0782F9',
-    width: '100%',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
   registerButton: {
     width: '100%',
     borderRadius: 10,
@@ -222,7 +206,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   loginButton: {
-    backgroundColor: '#0782F9',
+    backgroundColor: colours.tint,
     width: 150,
     padding: 15,
     marginBottom: 10,

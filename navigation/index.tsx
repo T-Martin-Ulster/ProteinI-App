@@ -15,7 +15,9 @@ import { createStackNavigator, TransitionPresets } from '@react-navigation/stack
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 
+import SplashScreen from '../screens/SplashScreen';
 import LoginScreen from '../screens/LoginScreen';
+import WelcomeScreen from '../screens/WelcomeScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import AccountScreen from '../screens/AccountScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
@@ -50,9 +52,11 @@ function RootNavigator() {
   return (
     <Stack.Navigator>
       <Stack.Group screenOptions={TransitionScreenOptions}>
+          <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: true, title: 'New Account' }} />
-          <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false, title: 'Home'}} />
+          <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Home" component={BottomTabNavigator} options={{ headerShown: false, title: 'Home'}} />
           <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'modal' }}>

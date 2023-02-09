@@ -9,10 +9,32 @@ import useColorScheme from '../hooks/useColorScheme';
 import colours from '../constants/Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function BasicScreen({ navigation }: RootStackScreenProps<'Basic'>) {
+export default function SplashScreen({ navigation }: RootStackScreenProps<'Splash'>) {
 
-  /** const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('') */
+  useEffect(() => {
+      NavigateToHomeOrLogin()
+     
+  })
+
+  function NavigateToHomeOrLogin(){
+    const {currentUser} = auth
+
+    setTimeout(function(){
+      if(currentUser == null){
+        navigation.reset({
+          index:0,
+          routes: [{name:'Login'}]
+        })
+      }
+      else{
+        navigation.reset({
+          index:0,
+          routes: [{name:'Welcome'}]
+        })
+      }
+    },1000)
+  }
+
 
   var defaultColour : string = useColorScheme();
 
@@ -26,7 +48,11 @@ export default function BasicScreen({ navigation }: RootStackScreenProps<'Basic'
   }
 
   return (
-    <SafeAreaView style={[styles.root, backgroundStyle()]}>
+    <SafeAreaView style={[styles.root, styles.backgroundlight]}>
+
+      <View style={styles.logoContainer}>
+        <Image source={require("../assets/images/logo.jpg")} style={styles.logo} accessibilityLabel="I-Protein logo"/>
+      </View>
       
     </SafeAreaView>
   );
@@ -35,11 +61,24 @@ export default function BasicScreen({ navigation }: RootStackScreenProps<'Basic'
 const styles = StyleSheet.create({
   root: {
     minHeight: Math.round(Dimensions.get('window').height),
+    width: '100%',
   },
   backgroundDark: {
     backgroundColor: colours.dark.background,
   },
   backgroundlight: {
     backgroundColor: colours.light.background,
+  },
+  logo: {
+    maxHeight: "100%",
+    maxWidth: "100%",
+  },
+  logoContainer: {
+    marginHorizontal: 40,
+    marginTop: 'auto',
+    marginBottom: 'auto',
+    width: 'auto',
+    height: 120,
+
   },
 });
