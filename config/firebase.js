@@ -3,13 +3,13 @@ import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC7XBJR89N46NCgPjo1QO_5vuDgV7IxUfU",
-  authDomain: "protein-i.firebaseapp.com",
-  projectId: "protein-i",
-  storageBucket: "protein-i.appspot.com",
-  messagingSenderId: "602736874034",
-  appId: "1:602736874034:web:08cbfdd5f856c3dafe222b",
-  measurementId: "G-W0MV21Z9VY"
+  apiKey: process.env.API_KEY,
+  authDomain: process.env.AUTH_DOMAIN,
+  projectId: process.env.PROJECT_ID,
+  storageBucket: process.env.STORAGE_BUCKET,
+  messagingSenderId: process.env.MESSAGING_SENDER_ID,
+  appId: process.env.APP_ID,
+  measurementId: process.env.MEASUREMENT_ID
 };
 
 let app;
