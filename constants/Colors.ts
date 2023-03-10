@@ -17,5 +17,6 @@ export default {
     border: '#fff',
     tabIconDefault: '#171B21',
     tabIconSelected: tintColorDark,
-  },
+  }, 
+  tint: '#0782F9',
 };

@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, TouchableOpacity, Image, Dimensions, Alert } from 'react-native';
 import { Text, View} from '../components/Themed';
 import { auth } from '../config/firebase'
 import navigation from '../navigation';
@@ -38,7 +38,7 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'Login'
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user: any) => {
       if (user) {
-        navigation.replace("Root")
+        navigation.replace("Welcome")
       }
     })
 
@@ -49,14 +49,46 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'Login'
     navigation.navigate('Register')
   }
 
+  function isValidEmail() {
+    var result = /\S+@\S+\.\S+/.test(email)
+    if(!result){
+      Alert.alert('Error', 'Please enter valid email')
+    }
+    return result;
+  }
+
+  function isValidPassword() {
+    var result = password.trim() != ""
+    if(!result){
+      Alert.alert('Error', 'Please enter password')
+    }
+    return result
+  }
+
   const handleLogin = () => {
-    auth
-      .signInWithEmailAndPassword(email, password)
-      .then((userCredentials: { user: any; }) => {
-        const user = userCredentials.user;
-        console.log('Logged in with:', user.email);
-      })
-      .catch((error: { message: any; }) => alert(error.message))
+    if(isValidEmail() && isValidPassword()){
+      auth
+        .signInWithEmailAndPassword(email, password)
+        .then((userCredentials: { user: any; }) => {
+          const user = userCredentials.user;
+          console.log('Logged in with:', user.email);
+        })
+        .catch((error: { message: any; }) => Alert.alert('Error', error.message))
+    }
+  }
+
+  const forgotPassword = () => {
+
+    if(isValidEmail() && isValidPassword()){
+      auth
+          .sendPasswordResetEmail(email)
+            .then(function (user) {
+              Alert.alert('Error','Please check your email...')
+            }).catch(function (e) {
+              console.log(e)
+              Alert.alert('Error','Account not found')
+            })
+    }
   }
 
   return (
@@ -70,7 +102,7 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'Login'
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Email"
-          
+          autoCapitalize='none'
           value={email}
           onChangeText={text => setEmail(text)}
           style={[styles.input, inputStyle()]}
@@ -89,15 +121,20 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'Login'
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           onPress={handleLogin}
-          style={styles.loginButton}
-        >
+          style={styles.loginButton}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
+
         <TouchableOpacity
           onPress={handleSignUp}
-          style={styles.registerButton}
-        >
+          style={styles.registerButton}>
           <Text style={styles.buttonOutlineText}>Register</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={forgotPassword}
+          style={styles.registerButton}>
+          <Text style={styles.buttonOutlineText}>Forgot Password</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -129,15 +166,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     marginTop: 100,
-  },
-  logo: {
-    maxHeight: "100%",
-    maxWidth: "100%",
-  },
-  logoContainer: {
-    width: 280,
-    height: 100,
-    marginBottom: 20,
   },
   separator: {
     color: "black",
@@ -171,13 +199,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
   },
-  button: {
-    backgroundColor: '#0782F9',
-    width: '100%',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
   registerButton: {
     width: '100%',
     borderRadius: 10,
@@ -185,7 +206,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   loginButton: {
-    backgroundColor: '#0782F9',
+    backgroundColor: colours.tint,
     width: 150,
     padding: 15,
     marginBottom: 10,

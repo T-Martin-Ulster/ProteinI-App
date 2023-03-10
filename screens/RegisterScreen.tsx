@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, TouchableOpacity, Image, Dimensions, Alert } from 'react-native';
 import { Text, View} from '../components/Themed';
 import { auth } from '../config/firebase'
 import navigation from '../navigation';
@@ -40,31 +40,53 @@ export default function RegisterScreen({ navigation }: RootStackScreenProps<'Reg
     navigation.goBack()
   }
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user: any) => {
-      if (user) {
-        navigation.replace("Root")
-      }
-    })
+  function isValidEmail() {
+    var result = /\S+@\S+\.\S+/.test(email)
+    if(!result){
+      Alert.alert('Error', 'Please enter valid email')
+    }
+    return result;
+  }
 
-    return unsubscribe
-  }, [])
+  function isValidPassword() {
+    if(password.trim() == ""){
+      Alert.alert('Error', 'Please enter password')
+      return false
+    }
+
+    if(/\s/g.test(password)){
+      Alert.alert('Error', 'Password can not contain spaces')
+      return false
+    }
+
+    if(password != confirm){
+      Alert.alert('Error', 'Passwords do not match')
+      return false
+    }
+
+    if(password.trim().length < 8){
+      Alert.alert('Error', 'Password is too short, must be at least 8 charaters')
+      return false
+    }
+
+    if(!/\d/.test(password) || !/[a-zA-Z]/g.test(password)){
+      Alert.alert('Error', 'Password must contain both numbers and letters')
+      return false
+    }
+    
+    return true
+  }
 
   const handleSignUp = () => {
-
-    if(password == confirm){
+    if(isValidEmail() && isValidPassword()){
       auth
       .createUserWithEmailAndPassword(email, password)
       .then((userCredentials: { user: any; }) => {
         const user = userCredentials.user;
         console.log('Registered with:', user.email);
       })
-      .catch((error: { message: any; }) => alert(error.message))
+      .catch((error: { message: any; }) => Alert.alert('Error',error.message))
     }
-    else{
-      alert("Passwords dont match")
-    }
-    
   }
 
   return (
@@ -78,7 +100,7 @@ export default function RegisterScreen({ navigation }: RootStackScreenProps<'Reg
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Email"
-          
+          autoCapitalize='none'
           value={email}
           onChangeText={text => setEmail(text)}
           style={[styles.input, inputStyle()]}
@@ -147,15 +169,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
   },
-  logo: {
-    maxHeight: "100%",
-    maxWidth: "100%",
-  },
-  logoContainer: {
-    width: 280,
-    height: 100,
-    marginBottom: 20,
-  },
   separator: {
     color: "black",
     marginVertical: 30,
@@ -202,7 +215,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   registerButton: {
-    backgroundColor: '#0782F9',
+    backgroundColor: colours.tint,
     width: 150,
     padding: 15,
     marginBottom: 10,

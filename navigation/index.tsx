@@ -15,9 +15,11 @@ import { createStackNavigator, TransitionPresets } from '@react-navigation/stack
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 
+import SplashScreen from '../screens/SplashScreen';
 import LoginScreen from '../screens/LoginScreen';
+import WelcomeScreen from '../screens/WelcomeScreen';
 import RegisterScreen from '../screens/RegisterScreen';
-import ModalScreen from '../screens/ModalScreen';
+import AccountScreen from '../screens/AccountScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import TabOneScreen from '../screens/TabOneScreen';
 import TabTwoScreen from '../screens/TabTwoScreen';
@@ -48,13 +50,17 @@ const TransitionScreenOptions = {
 
 function RootNavigator() {
   return (
-    <Stack.Navigator screenOptions={TransitionScreenOptions}>
-      <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: true, title: 'New Account' }} />
-      <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false}} />
-      <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
+    <Stack.Navigator>
+      <Stack.Group screenOptions={TransitionScreenOptions}>
+          <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: true, title: 'New Account' }} />
+          <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Home" component={BottomTabNavigator} options={{ headerShown: false, title: 'Home'}} />
+          <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
+      </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
-        <Stack.Screen name="Modal" component={ModalScreen} />
+        <Stack.Screen name="Account" component={AccountScreen}  />
       </Stack.Group>
     </Stack.Navigator>
   );
@@ -83,7 +89,7 @@ function BottomTabNavigator() {
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
           headerRight: () => (
             <Pressable
-              onPress={() => navigation.navigate('Modal')}
+              onPress={() => navigation.navigate('Account')}
               style={({ pressed }) => ({
                 opacity: pressed ? 0.5 : 1,
               })}>
