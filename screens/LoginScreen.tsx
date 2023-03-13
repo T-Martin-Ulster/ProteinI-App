@@ -3,17 +3,19 @@ import { useEffect, useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, TouchableOpacity, Image, Dimensions, Alert } from 'react-native';
 import { Text, View} from '../components/Themed';
 import { auth } from '../config/firebase'
-import navigation from '../navigation';
 import { RootStackScreenProps } from '../types';
-
 import useColorScheme from '../hooks/useColorScheme';
 import colours from '../constants/Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Constants from "expo-constants";
 
 export default function LoginScreen({ navigation }: RootStackScreenProps<'Login'>) {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  
+  const { manifest } = Constants;
+  const baseUri = `http://${manifest.debuggerHost.split(':').shift()}:7267/api/business/`;
 
   var defaultColour : string = useColorScheme();
 
@@ -35,13 +37,34 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'Login'
     }
   }
 
+  function getBusinessFromApi(baseUri: string, businessId: string){
+    return fetch(baseUri + businessId)
+      .then(response => response.json())
+      .then(json => {
+        return json;
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+  
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user: any) => {
+    const unsubscribe = auth.onAuthStateChanged(async (user: any) => {
       if (user) {
-        navigation.replace("Welcome")
+        const businessData = await getBusinessFromApi(baseUri, user.email)
+
+        console.log(businessData)
+
+        console.log(businessData.title)
+        if (businessData.title == "Not Found"){
+          navigation.replace("Welcome")
+        }
+        else{
+          navigation.replace("Home")
+        }
+        
       }
     })
-
     return unsubscribe
   }, [])
 
